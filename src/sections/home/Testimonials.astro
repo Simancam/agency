@@ -1,0 +1,475 @@
+---
+import { World } from "@/components/ui/globe";
+
+export interface Stat {
+    value: number;
+    suffix: string;
+    label: string;
+}
+
+export interface Testimonial {
+    name: string;
+    country: string;
+    rating: number;
+    quote: string;
+    avatar?: string;
+}
+
+export interface Props {
+    title?: string;
+    stats?: Stat[];
+    testimonials?: Testimonial[];
+}
+
+const defaultStats: Stat[] = [
+    { value: 30, suffix: "+", label: "Projects delivered" },
+    { value: 98, suffix: "%", label: "Client satisfaction" },
+    { value: 12, suffix: "+", label: "Years combined experience" },
+];
+
+const defaultTestimonials: Testimonial[] = [
+    {
+        name: "Lucas M.",
+        country: "United States",
+        rating: 5,
+        quote: "Great work overall. The design feels premium, the layout is well structured, and everything is responsive. They made the changes I requested quickly and didn't drag the process. Would definitely work again.",
+    },
+    {
+        name: "Sofía R.",
+        country: "Spain",
+        rating: 5,
+        quote: "Communication was clear from the first call to the final handoff. They listened to our feedback, pushed back when it mattered, and still delivered every milestone on time without last-minute surprises.",
+    },
+    {
+        name: "Kenji T.",
+        country: "Japan",
+        rating: 5,
+        quote: "They balanced strong design decisions with real attention to detail. The process felt calm and organized, and the site shipped on schedule with everything we needed to keep growing.",
+    },
+];
+
+const {
+    title = "Testimonials",
+    stats = defaultStats,
+    testimonials = defaultTestimonials,
+}: Props = Astro.props;
+
+const headingId = "testimonials-title";
+const pad = (value: number) => String(value).padStart(2, "0");
+
+// Configuración del globo adaptada a la paleta del sitio (blanco/grises).
+const globeConfig = {
+    pointSize: 3.5,
+    globeColor: "#141414",
+    showAtmosphere: true,
+    atmosphereColor: "#ffffff",
+    atmosphereAltitude: 0.15,
+    emissive: "#141414",
+    emissiveIntensity: 0.35,
+    shininess: 0.9,
+    polygonColor: "rgba(255,255,255,0.6)",
+    ambientLight: "#ffffff",
+    directionalLeftLight: "#ffffff",
+    directionalTopLight: "#ffffff",
+    pointLight: "#ffffff",
+    arcTime: 2200,
+    arcLength: 0.9,
+    rings: 1,
+    maxRings: 3,
+    initialPosition: { lat: 22.3193, lng: 114.1694 },
+    autoRotate: true,
+    autoRotateSpeed: 0.35,
+};
+
+const globeArcs = [
+    { order: 1, startLat: 40.7128, startLng: -74.006, endLat: 51.5072, endLng: -0.1276, arcAlt: 0.3, color: "#ffffff" },
+    { order: 1, startLat: 34.0522, startLng: -118.2437, endLat: 35.6762, endLng: 139.6503, arcAlt: 0.35, color: "#d4d4d4" },
+    { order: 2, startLat: 22.3193, startLng: 114.1694, endLat: 1.3521, endLng: 103.8198, arcAlt: 0.2, color: "#a3a3a3" },
+    { order: 2, startLat: 48.8566, startLng: 2.3522, endLat: 52.52, endLng: 13.405, arcAlt: 0.2, color: "#ffffff" },
+    { order: 3, startLat: -23.5505, startLng: -46.6333, endLat: -34.6037, endLng: -58.3816, arcAlt: 0.25, color: "#d4d4d4" },
+    { order: 3, startLat: 28.6139, startLng: 77.209, endLat: 51.5072, endLng: -0.1276, arcAlt: 0.4, color: "#a3a3a3" },
+    { order: 4, startLat: -33.8688, startLng: 151.2093, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.3, color: "#ffffff" },
+    { order: 4, startLat: 37.7749, startLng: -122.4194, endLat: 40.7128, endLng: -74.006, arcAlt: 0.15, color: "#d4d4d4" },
+    { order: 5, startLat: 35.6762, startLng: 139.6503, endLat: 22.3193, endLng: 114.1694, arcAlt: 0.2, color: "#a3a3a3" },
+    { order: 5, startLat: 41.9028, startLng: 12.4964, endLat: 48.8566, endLng: 2.3522, arcAlt: 0.2, color: "#ffffff" },
+];
+---
+
+<section
+    class="relative mt-24 mb-16 w-full overflow-hidden bg-[#0a0a0a] px-5 pt-20 pb-24 text-white sm:px-8 md:px-10 lg:mt-32 lg:mb-24 lg:px-16 lg:pt-24 lg:pb-32"
+    aria-labelledby={headingId}
+>
+    <!-- Globe background (componente existente en components/ui/globe.tsx) -->
+    <div
+        class="pointer-events-none absolute inset-x-0 top-0 z-0 flex justify-center [mask-image:linear-gradient(to_bottom,black_55%,transparent_100%)]"
+        aria-hidden="true"
+    >
+        <div class="h-[clamp(26rem,62vw,46rem)] w-[clamp(26rem,62vw,46rem)] opacity-80">
+            <World
+                client:only="react"
+                data={globeArcs}
+                globeConfig={globeConfig}
+            />
+        </div>
+    </div>
+
+    <!-- Título -->
+    <div class="relative z-10 flex justify-center">
+        <h2
+            id={headingId}
+            class="text-center text-[clamp(3rem,10vw,8.5rem)] font-normal leading-[0.85] tracking-[-0.055em] text-white"
+        >
+            {title}
+        </h2>
+    </div>
+
+    <!-- Paneles: estadísticas + carrusel, debajo del título -->
+    <div
+        class="relative z-20 mx-auto mt-4 grid w-full max-w-6xl grid-cols-1 gap-4 sm:mt-6 md:grid-cols-[max-content_minmax(0,1fr)] lg:mt-10"
+    >
+        <!-- Panel izquierdo: estadísticas -->
+        <div class="md:h-full">
+            <div
+                class="flex h-full flex-col rounded-lg border border-white/15 bg-white/[0.03] p-6 backdrop-blur-xl sm:p-8"
+            >
+                <h3 class="sr-only">Key results</h3>
+                <div class="grid grid-cols-1 gap-4 md:h-full md:grid-rows-3">
+                    {stats.map((stat) => (
+                        <div class="flex flex-col md:justify-center">
+                            <p class="flex items-start gap-0.5">
+                                <span
+                                    class="text-4xl leading-none font-normal tracking-tight text-white sm:text-5xl lg:text-6xl"
+                                >
+                                    {stat.value}
+                                </span>
+                                <span
+                                    class="mt-0.5 text-lg leading-none text-white/50 sm:text-xl"
+                                    aria-hidden="true"
+                                >
+                                    {stat.suffix}
+                                </span>
+                            </p>
+                            <p class="mt-2 text-xs text-white/50 sm:text-sm">
+                                {stat.label}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel derecho: carrusel -->
+        <div>
+            <div
+                data-carousel
+                role="region"
+                aria-roledescription="carousel"
+                aria-label="Client testimonials"
+                tabindex="0"
+                class="relative flex h-full flex-col rounded-lg border border-white/15 bg-white/[0.03] p-6 backdrop-blur-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:p-8"
+            >
+                <!-- Contador + comillas -->
+                <div class="flex items-start justify-between gap-6">
+                    <div>
+                        <p
+                            class="text-sm tracking-[0.25em] text-white/50 tabular-nums"
+                            aria-live="polite"
+                        >
+                            <span data-carousel-counter>
+                                {pad(1)} / {pad(testimonials.length)}
+                            </span>
+                        </p>
+                        <span
+                            class="mt-3 block h-px w-12 bg-white/20"
+                            aria-hidden="true"
+                        ></span>
+                    </div>
+
+                    <svg
+                        class="h-9 w-10 shrink-0 text-white/10"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            d="M10 11H6.5C6.5 8.5 8 7 10.5 6.5L9.8 4C5.6 4.8 3 8.1 3 12.5V20h7v-9Zm11 0h-3.5C17.5 8.5 19 7 21.5 6.5L20.8 4C16.6 4.8 14 8.1 14 12.5V20h7v-9Z"
+                        ></path>
+                    </svg>
+                </div>
+
+                <!-- Slides -->
+                <div
+                    id="testimonials-track"
+                    data-carousel-slides
+                    class="relative mt-8 grid flex-1"
+                >
+                    {testimonials.map((testimonial, index) => (
+                        <article
+                            data-slide
+                            class:list={[
+                                "col-start-1 row-start-1 flex h-full flex-col transition-opacity duration-500 ease-out motion-reduce:transition-none",
+                                index === 0
+                                    ? "opacity-100"
+                                    : "pointer-events-none opacity-0",
+                            ]}
+                            aria-hidden={index === 0 ? "false" : "true"}
+                        >
+                            <!-- Estrellas -->
+                            <div
+                                class="flex items-center gap-1"
+                                role="img"
+                                aria-label={`${testimonial.rating} de 5 estrellas`}
+                            >
+                                {Array.from({ length: 5 }).map((_, star) => (
+                                    <svg
+                                        class:list={[
+                                            "h-4 w-4",
+                                            star < testimonial.rating
+                                                ? "text-white"
+                                                : "text-white/20",
+                                        ]}
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9L12 2.5Z" />
+                                    </svg>
+                                ))}
+                            </div>
+
+                            <!-- Cita -->
+                            <blockquote
+                                class="mt-6 text-xl leading-snug tracking-[-0.01em] text-white sm:text-2xl lg:text-[1.65rem]"
+                                aria-live="polite"
+                            >
+                                “{testimonial.quote}”
+                            </blockquote>
+
+                            <!-- Autor -->
+                            <footer
+                                class="mt-auto flex items-center gap-3 pt-8 pr-28"
+                            >
+                                <div
+                                    class="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/15 bg-white/[0.06] text-sm text-white/70"
+                                >
+                                    {testimonial.avatar ? (
+                                        <img
+                                            src={testimonial.avatar}
+                                            alt={`Portrait of ${testimonial.name}`}
+                                            width="44"
+                                            height="44"
+                                            loading="lazy"
+                                            decoding="async"
+                                            class="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <span aria-hidden="true">
+                                            {testimonial.name
+                                                .trim()
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                        </span>
+                                    )}
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm tracking-wide text-white uppercase">
+                                        {testimonial.name}
+                                    </p>
+                                    <p class="truncate text-sm text-white/50">
+                                        {testimonial.country}
+                                    </p>
+                                </div>
+                            </footer>
+                        </article>
+                    ))}
+                </div>
+
+                <!-- Navegación -->
+                <div
+                    class="absolute right-6 bottom-6 flex items-center gap-2 sm:right-8 sm:bottom-8 sm:gap-3"
+                >
+                    <button
+                        type="button"
+                        data-carousel-prev
+                        aria-label="Testimonio anterior"
+                        aria-controls="testimonials-track"
+                        class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors duration-300 hover:border-white/50 hover:bg-white/[0.06] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-11 sm:w-11"
+                    >
+                        <svg
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 18l-6-6 6-6"
+                            ></path>
+                        </svg>
+                    </button>
+                    <button
+                        type="button"
+                        data-carousel-next
+                        aria-label="Testimonio siguiente"
+                        aria-controls="testimonials-track"
+                        class="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white/70 transition-colors duration-300 hover:border-white/50 hover:bg-white/[0.06] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:h-11 sm:w-11"
+                    >
+                        <svg
+                            class="h-4 w-4"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M9 18l6-6-6-6"
+                            ></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    let cleanup: (() => void) | null = null;
+
+    const initTestimonials = (): void => {
+        const carousel =
+            document.querySelector<HTMLElement>("[data-carousel]");
+        if (!carousel) return;
+
+        const slides = Array.from(
+            carousel.querySelectorAll<HTMLElement>("[data-slide]"),
+        );
+        const prev = carousel.querySelector<HTMLButtonElement>(
+            "[data-carousel-prev]",
+        );
+        const next = carousel.querySelector<HTMLButtonElement>(
+            "[data-carousel-next]",
+        );
+        const counter = carousel.querySelector<HTMLElement>(
+            "[data-carousel-counter]",
+        );
+
+        if (slides.length === 0) return;
+
+        cleanup?.();
+
+        const total = slides.length;
+        const pad = (value: number) => String(value).padStart(2, "0");
+        const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        let current = 0;
+        let timer: number | undefined;
+
+        const show = (index: number): void => {
+            current = (index + total) % total;
+
+            slides.forEach((slide, slideIndex) => {
+                const active = slideIndex === current;
+
+                slide.classList.toggle("opacity-100", active);
+                slide.classList.toggle("opacity-0", !active);
+                slide.classList.toggle("pointer-events-none", !active);
+                slide.setAttribute("aria-hidden", String(!active));
+
+                if (active) {
+                    slide.removeAttribute("inert");
+                } else {
+                    slide.setAttribute("inert", "");
+                }
+            });
+
+            if (counter) {
+                counter.textContent = `${pad(current + 1)} / ${pad(total)}`;
+            }
+        };
+
+        const stop = (): void => {
+            if (timer === undefined) return;
+            window.clearInterval(timer);
+            timer = undefined;
+        };
+
+        const start = (): void => {
+            if (reduceMotion || timer !== undefined) return;
+            timer = window.setInterval(() => show(current + 1), 7000);
+        };
+
+        const restart = (): void => {
+            stop();
+            start();
+        };
+
+        const goPrev = (): void => {
+            show(current - 1);
+            restart();
+        };
+
+        const goNext = (): void => {
+            show(current + 1);
+            restart();
+        };
+
+        const onKeydown = (event: KeyboardEvent): void => {
+            if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                goPrev();
+            } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                goNext();
+            }
+        };
+
+        const onPointerEnter = (): void => stop();
+        const onPointerLeave = (): void => start();
+        const onFocusIn = (): void => stop();
+        const onFocusOut = (): void => start();
+
+        prev?.addEventListener("click", goPrev);
+        next?.addEventListener("click", goNext);
+        carousel.addEventListener("keydown", onKeydown);
+        carousel.addEventListener("pointerenter", onPointerEnter);
+        carousel.addEventListener("pointerleave", onPointerLeave);
+        carousel.addEventListener("focusin", onFocusIn);
+        carousel.addEventListener("focusout", onFocusOut);
+
+        show(0);
+        start();
+
+        cleanup = () => {
+            stop();
+
+            prev?.removeEventListener("click", goPrev);
+            next?.removeEventListener("click", goNext);
+            carousel.removeEventListener("keydown", onKeydown);
+            carousel.removeEventListener("pointerenter", onPointerEnter);
+            carousel.removeEventListener("pointerleave", onPointerLeave);
+            carousel.removeEventListener("focusin", onFocusIn);
+            carousel.removeEventListener("focusout", onFocusOut);
+
+            cleanup = null;
+        };
+    };
+
+    initTestimonials();
+
+    // Compatibilidad con View Transitions de Astro.
+    document.addEventListener("astro:page-load", initTestimonials);
+    document.addEventListener("astro:before-swap", () => {
+        cleanup?.();
+    });
+    window.addEventListener("pagehide", () => {
+        cleanup?.();
+    });
+</script>

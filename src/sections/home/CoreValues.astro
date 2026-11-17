@@ -1,0 +1,502 @@
+---
+interface CoreValue {
+    id: string;
+    title: string;
+    headline: string;
+    description: string;
+    image: string;
+}
+
+const values: CoreValue[] = [
+    {
+        id: "innovation",
+        title: "Innovation",
+        headline: "Build what's next",
+        description:
+            "We explore early, test quickly and turn ambitious ideas into products people actually use.",
+        image: "/images/core-values/innovation.jpg",
+    },
+    {
+        id: "speed",
+        title: "Speed",
+        headline: "Ship without waiting",
+        description:
+            "Small teams, short cycles and decisions made close to the work keep us moving fast.",
+        image: "/images/core-values/speed.jpg",
+    },
+    {
+        id: "transparency",
+        title: "Transparency",
+        headline: "Open by default",
+        description:
+            "We believe in radical transparency with our users and team.",
+        image: "/images/core-values/transparency.jpg",
+    },
+    {
+        id: "impact",
+        title: "Impact",
+        headline: "Make it matter",
+        description:
+            "We measure success by the change we create for our clients and the people they serve.",
+        image: "/images/core-values/impact.jpg",
+    },
+];
+
+const radius = 16;
+const circumference = 2 * Math.PI * radius;
+---
+
+<section
+    data-core-values
+    class="relative flex min-h-svh w-full flex-col justify-center overflow-hidden bg-[#0a0a0a] px-5 py-24 text-white sm:px-8 md:h-screen md:px-10 md:py-0 lg:px-16"
+    aria-label="Our core values"
+>
+    <!-- Datos para el script (no visibles) -->
+    <div
+        data-core-values-json
+        class="hidden"
+        aria-hidden="true"
+        set:text={JSON.stringify(values)}
+    >
+    </div>
+
+    <div
+        class="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,30vw)_minmax(0,1fr)] md:items-center md:gap-6 lg:gap-10"
+    >
+        <!-- Columna izquierda: títulos de los valores -->
+        <ul
+            class="order-2 mt-6 flex gap-5 overflow-x-auto pb-2 [scrollbar-width:none] md:order-1 md:mt-0 md:flex-col md:gap-1 md:overflow-visible md:pb-0 [&::-webkit-scrollbar]:hidden"
+        >
+            {values.map((value, index) => (
+                <li
+                    data-title
+                    class:list={[
+                        "shrink-0 font-light tracking-tighter",
+                        "text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-7xl",
+                        index === 0 ? "opacity-100" : "opacity-25",
+                    ]}
+                >
+                    {value.title}
+                </li>
+            ))}
+        </ul>
+
+        <!-- Columna central: imagen + indicador de progreso -->
+        <div class="order-1 flex flex-col items-center md:order-2">
+            <div
+                class="relative aspect-[3/4] w-[72vw] max-w-[300px] overflow-hidden rounded-md shadow-2xl md:h-[58vh] md:max-h-[560px] md:w-auto md:max-w-none"
+            >
+                {values.map((value, index) => (
+                    <img
+                        data-image
+                        src={value.image}
+                        alt={`${value.title}: ${value.headline}`}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        aria-hidden={index === 0 ? "false" : "true"}
+                        class:list={[
+                            "absolute inset-0 h-full w-full object-cover",
+                            index === 0 ? "opacity-100" : "opacity-0",
+                        ]}
+                    />
+                ))}
+            </div>
+
+            <svg
+                data-progress
+                class="mt-6 h-9 w-9 -rotate-90"
+                viewBox="0 0 36 36"
+                role="progressbar"
+                aria-label="Core values scroll progress"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="0"
+            >
+                <circle
+                    cx="18"
+                    cy="18"
+                    r={radius}
+                    fill="none"
+                    stroke-width="2"
+                    class="stroke-neutral-800"
+                />
+                <circle
+                    data-progress-ring
+                    cx="18"
+                    cy="18"
+                    r={radius}
+                    fill="none"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-dasharray={circumference}
+                    stroke-dashoffset={circumference}
+                    class="stroke-white"
+                />
+            </svg>
+        </div>
+
+        <!-- Columna derecha: subtítulo y descripción del valor activo -->
+        <div
+            class="order-3 mt-8 md:mt-0 md:max-w-[34ch]"
+            aria-live="polite"
+        >
+            <h2
+                data-headline
+                class="text-3xl font-light leading-tight tracking-tight sm:text-4xl lg:text-5xl xl:text-6xl"
+            >
+                {values[0].headline}
+            </h2>
+            <p
+                data-description
+                class="mt-4 text-base leading-relaxed text-neutral-300 md:mt-6 lg:text-lg"
+            >
+                {values[0].description}
+            </p>
+        </div>
+    </div>
+
+    <!-- Indicador para invitar a scrollear (solo desktop, donde la sección se pinnea) -->
+    <div
+        data-scroll-hint
+        class="pointer-events-none absolute inset-x-0 bottom-6 hidden flex-col items-center gap-2 text-[0.65rem] uppercase tracking-[0.3em] text-neutral-400 md:flex"
+    >
+        <span>Scroll Down</span>
+        <svg
+            class="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            aria-hidden="true"
+        >
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4v16m0 0-6-6m6 6 6-6"
+            ></path>
+        </svg>
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    interface CoreValueData {
+        id: string;
+        title: string;
+        headline: string;
+        description: string;
+        image: string;
+    }
+
+    /** Valida que un valor desconocido tenga la forma de CoreValueData. */
+    const isCoreValue = (value: unknown): value is CoreValueData => {
+        if (typeof value !== "object" || value === null) return false;
+        const record = value as Record<string, unknown>;
+        return (
+            typeof record.id === "string" &&
+            typeof record.title === "string" &&
+            typeof record.headline === "string" &&
+            typeof record.description === "string" &&
+            typeof record.image === "string"
+        );
+    };
+
+    /** Lee los datos serializados en el JSON oculto del componente. */
+    const readValues = (section: HTMLElement): CoreValueData[] => {
+        const data = section.querySelector<HTMLElement>(
+            "[data-core-values-json]",
+        );
+        if (!data?.textContent) return [];
+
+        try {
+            const parsed: unknown = JSON.parse(data.textContent);
+            return Array.isArray(parsed) ? parsed.filter(isCoreValue) : [];
+        } catch {
+            return [];
+        }
+    };
+
+    let cleanup: (() => void) | null = null;
+
+    const initCoreValues = (): void => {
+        const section = document.querySelector<HTMLElement>(
+            "[data-core-values]",
+        );
+        if (!section) return;
+
+        const values = readValues(section);
+        if (values.length === 0) return;
+
+        const titles = Array.from(
+            section.querySelectorAll<HTMLElement>("[data-title]"),
+        );
+        const images = Array.from(
+            section.querySelectorAll<HTMLElement>("[data-image]"),
+        );
+        const headline =
+            section.querySelector<HTMLElement>("[data-headline]");
+        const description = section.querySelector<HTMLElement>(
+            "[data-description]",
+        );
+        const progressRing = section.querySelector<SVGCircleElement>(
+            "[data-progress-ring]",
+        );
+        const progressBar =
+            section.querySelector<SVGElement>("[data-progress]");
+        const scrollHint =
+            section.querySelector<HTMLElement>("[data-scroll-hint]");
+
+        if (!headline || !description || !progressRing) return;
+
+        // Limpia una instancia anterior antes de volver a montar.
+        cleanup?.();
+        cleanup = null;
+
+        const radius = Number(progressRing.getAttribute("r")) || 16;
+        const circumference = 2 * Math.PI * radius;
+        progressRing.style.strokeDasharray = `${circumference}`;
+
+        let activeIndex = 0;
+        let textTimeline: gsap.core.Timeline | null = null;
+        let hintHidden = false;
+
+        /** Oculta o muestra el aviso "Scroll Down" sin repetir la animación. */
+        const setHintHidden = (hidden: boolean): void => {
+            if (!scrollHint || hintHidden === hidden) return;
+            hintHidden = hidden;
+
+            const reduceMotion = window.matchMedia(
+                "(prefers-reduced-motion: reduce)",
+            ).matches;
+
+            gsap.to(scrollHint, {
+                opacity: hidden ? 0 : 1,
+                duration: reduceMotion ? 0 : 0.3,
+                ease: "power2.out",
+                overwrite: true,
+            });
+        };
+
+        /** Actualiza el anillo de progreso y su valor accesible. */
+        const setProgress = (progress: number): void => {
+            const clamped = Math.min(1, Math.max(0, progress));
+            progressRing.style.strokeDashoffset = `${circumference * (1 - clamped)}`;
+            progressBar?.setAttribute(
+                "aria-valuenow",
+                String(Math.round(clamped * 100)),
+            );
+        };
+
+        /** Aplica el estado del valor activo; evita repetir si no cambió. */
+        const setActive = (index: number, animate: boolean): void => {
+            if (index === activeIndex) return;
+
+            const value = values[index];
+            if (!value) return;
+            activeIndex = index;
+
+            const titleDuration = animate ? 0.4 : 0;
+
+            titles.forEach((title, titleIndex) => {
+                gsap.to(title, {
+                    opacity: titleIndex === index ? 1 : 0.25,
+                    duration: titleDuration,
+                    overwrite: true,
+                });
+            });
+
+            images.forEach((image, imageIndex) => {
+                const isActive = imageIndex === index;
+                image.setAttribute(
+                    "aria-hidden",
+                    isActive ? "false" : "true",
+                );
+
+                if (!animate) {
+                    gsap.set(image, {
+                        opacity: isActive ? 1 : 0,
+                        scale: 1,
+                    });
+                    return;
+                }
+
+                if (isActive) {
+                    gsap.fromTo(
+                        image,
+                        { opacity: 0, scale: 1.05 },
+                        {
+                            opacity: 1,
+                            scale: 1,
+                            duration: 0.7,
+                            ease: "power2.out",
+                            overwrite: true,
+                        },
+                    );
+                } else {
+                    gsap.to(image, {
+                        opacity: 0,
+                        duration: 0.45,
+                        ease: "power1.out",
+                        overwrite: true,
+                    });
+                }
+            });
+
+            if (!animate) {
+                headline.textContent = value.headline;
+                description.textContent = value.description;
+                return;
+            }
+
+            textTimeline?.kill();
+            textTimeline = gsap.timeline();
+            textTimeline
+                .to([headline, description], {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.25,
+                    ease: "power2.in",
+                    overwrite: true,
+                })
+                .call(() => {
+                    headline.textContent = value.headline;
+                    description.textContent = value.description;
+                })
+                .fromTo(
+                    [headline, description],
+                    { opacity: 0, y: 20 },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                        ease: "power3.out",
+                        stagger: 0.04,
+                        overwrite: true,
+                    },
+                );
+        };
+
+        // Estado inicial coherente con el HTML renderizado.
+        setProgress(0);
+        gsap.set(titles, {
+            opacity: (index: number) => (index === 0 ? 1 : 0.25),
+        });
+        gsap.set(images, {
+            opacity: (index: number) => (index === 0 ? 1 : 0),
+            scale: 1,
+        });
+
+        const mm = gsap.matchMedia();
+
+        mm.add(
+            {
+                isDesktop: "(min-width: 768px)",
+                reduceMotion: "(prefers-reduced-motion: reduce)",
+            },
+            (context) => {
+                const conditions = context.conditions ?? {};
+                const isDesktop = Boolean(conditions.isDesktop);
+                const reduceMotion = Boolean(conditions.reduceMotion);
+                const pinned = isDesktop && !reduceMotion;
+
+                const trigger = ScrollTrigger.create({
+                    trigger: section,
+                    start: pinned ? "top top" : "top bottom",
+                    end: pinned
+                        ? () => `+=${window.innerHeight * values.length}`
+                        : "bottom top",
+                    pin: pinned,
+                    scrub: pinned,
+                    anticipatePin: 1,
+                    invalidateOnRefresh: true,
+                    onUpdate: (self) => {
+                        setProgress(self.progress);
+                        const next = Math.min(
+                            values.length - 1,
+                            Math.max(
+                                0,
+                                Math.floor(self.progress * values.length),
+                            ),
+                        );
+                        setActive(next, !reduceMotion);
+
+                        // El aviso desaparece al llegar al último valor.
+                        setHintHidden(next >= values.length - 1);
+                    },
+                });
+
+                return () => {
+                    trigger.kill();
+                    textTimeline?.kill();
+                    textTimeline = null;
+
+                    gsap.killTweensOf([
+                        ...titles,
+                        ...images,
+                        headline,
+                        description,
+                    ]);
+                    gsap.set([...titles, ...images, headline, description], {
+                        clearProps: "all",
+                    });
+
+                    // Restaura el primer valor al desmontar.
+                    gsap.set(titles, {
+                        opacity: (index: number) =>
+                            index === 0 ? 1 : 0.25,
+                    });
+                    gsap.set(images, {
+                        opacity: (index: number) =>
+                            index === 0 ? 1 : 0,
+                    });
+                    activeIndex = 0;
+                    setProgress(0);
+
+                    // Restaura el aviso para la próxima visita.
+                    hintHidden = false;
+                    if (scrollHint) {
+                        gsap.killTweensOf(scrollHint);
+                        gsap.set(scrollHint, { clearProps: "opacity" });
+                    }
+                };
+            },
+        );
+
+        cleanup = () => {
+            mm.revert();
+            cleanup = null;
+        };
+
+        // Recalcula el pin cuando las imágenes hayan cargado.
+        void Promise.all(
+            images.map((image) => {
+                if (!(image instanceof HTMLImageElement) || image.complete) {
+                    return Promise.resolve();
+                }
+                return new Promise<void>((resolve) => {
+                    image.addEventListener("load", () => resolve(), {
+                        once: true,
+                    });
+                    image.addEventListener("error", () => resolve(), {
+                        once: true,
+                    });
+                });
+            }),
+        ).then(() => ScrollTrigger.refresh());
+    };
+
+    initCoreValues();
+
+    // Compatibilidad con View Transitions de Astro.
+    document.addEventListener("astro:page-load", initCoreValues);
+    document.addEventListener("astro:before-swap", () => {
+        cleanup?.();
+    });
+    window.addEventListener("pagehide", () => {
+        cleanup?.();
+    });
+</script>

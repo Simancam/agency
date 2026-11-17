@@ -1,0 +1,393 @@
+---
+import {
+    Bot,
+    ChartLine,
+    Clapperboard,
+    CodeXml,
+    Megaphone,
+    PenTool,
+    type LucideIcon,
+} from "lucide-react";
+import TechText from "@/components/TechText";
+
+interface Service {
+    id: string;
+    index: string;
+    title: string;
+    description: string;
+    icon:
+        | "marketing"
+        | "design"
+        | "audiovisual"
+        | "automation"
+        | "analytics"
+        | "development";
+}
+
+const services: Service[] = [
+    {
+        id: "marketing",
+        index: "01",
+        title: "Marketing",
+        description:
+            "Campaigns, funnels and content systems built to reach the right people and measure what works.",
+        icon: "marketing",
+    },
+    {
+        id: "design",
+        index: "02",
+        title: "Design",
+        description:
+            "Interfaces, identities and prototypes crafted with clarity, precision and a strong point of view.",
+        icon: "design",
+    },
+    {
+        id: "audiovisual",
+        index: "03",
+        title: "Audiovisual",
+        description:
+            "Motion, video and sound that give your brand a voice people actually remember.",
+        icon: "audiovisual",
+    },
+    {
+        id: "ai-automatizations",
+        index: "04",
+        title: "AI Automatizations",
+        description:
+            "Agents and automations that remove repetitive work and keep your operations moving.",
+        icon: "automation",
+    },
+    {
+        id: "data-analysis",
+        index: "05",
+        title: "Data Analysis",
+        description:
+            "Dashboards and models that turn raw data into decisions your team can act on.",
+        icon: "analytics",
+    },
+    {
+        id: "web-development",
+        index: "06",
+        title: "Web Development",
+        description:
+            "Software, websites and platforms engineered to be fast, reliable and easy to extend.",
+        icon: "development",
+    },
+];
+
+/** Iconos de Lucide para cada servicio. */
+const iconMap: Record<Service["icon"], LucideIcon> = {
+    marketing: Megaphone,
+    design: PenTool,
+    audiovisual: Clapperboard,
+    automation: Bot,
+    analytics: ChartLine,
+    development: CodeXml,
+};
+---
+
+<section
+    data-services
+    class="relative w-full py-16 text-white"
+    aria-labelledby="services-title"
+>
+    <div class="px-5 sm:px-8 md:px-10 lg:px-16">
+        <h2 id="services-title" class="overflow-hidden text-white">
+            <span class="sr-only">Our Services</span>
+            <span class="block h-[clamp(3.5rem,10vw,7rem)]" aria-hidden="true">
+                <TechText
+                    client:only="react"
+                    text="Our Services"
+                    fontWeight={400}
+                    fontSize={150}
+                    letterSpacing={-0.045}
+                    align="left"
+                    reveal="letter"
+                    lineStyle="solid"
+                    strokeWidth={1}
+                    reach={160}
+                    specks={12}
+                    labels={false}
+                    guides={false}
+                    draggable={false}
+                    clickKick
+                    intro="metrics"
+                    sweep={false}
+                    style={{ width: "110%", marginLeft: "-5%" }}
+                />
+            </span>
+        </h2>
+    </div>
+
+    <!-- El contenedor llega a los bordes en X; solo se dibuja su sección punteada. -->
+    <div class="relative mt-12 sm:mt-16">
+        <!-- Borde punteado exterior (se revela de izquierda a derecha al scrollear) -->
+        <div
+            data-border
+            class="pointer-events-none absolute inset-0 border border-dashed border-white/20"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Divisores verticales (desktop) -->
+        <div
+            data-divider="vertical"
+            class="absolute top-0 bottom-0 left-[33.333%] hidden w-px origin-top border-l border-dashed border-white/15 md:block"
+            aria-hidden="true"
+        ></div>
+        <div
+            data-divider="vertical"
+            class="absolute top-0 bottom-0 left-[66.667%] hidden w-px origin-top border-l border-dashed border-white/15 md:block"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Divisor horizontal entre la primera y la segunda fila (desktop) -->
+        <div
+            data-divider="horizontal"
+            class="absolute top-1/2 right-0 left-0 hidden h-px origin-left border-t border-dashed border-white/15 md:block"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Celdas: 6 en total (3 columnas x 2 filas en desktop) -->
+        <div class="grid grid-cols-1 md:auto-rows-fr md:grid-cols-3">
+            {services.map((service) => {
+                const Icon = iconMap[service.icon];
+
+                return (
+                    <article
+                        data-service
+                        class="group relative flex min-h-[26vh] flex-col justify-between gap-8 border-b border-dashed border-white/15 p-6 last:border-b-0 md:min-h-[32vh] md:border-b-0 md:p-8"
+                    >
+                        <!-- Borde punteado de la celda al hacer hover -->
+                        <div
+                            class="pointer-events-none absolute inset-0 border border-dashed border-transparent transition-colors duration-300 group-hover:border-white/50"
+                            aria-hidden="true"
+                        ></div>
+
+                        <!-- Fila superior: icono + número -->
+                        <div class="relative flex items-start justify-between gap-4">
+                            <div class="relative">
+                                <Icon
+                                    data-icon
+                                    className="h-6 w-6 text-white/80 md:h-7 md:w-7"
+                                    strokeWidth={1.25}
+                                    aria-hidden="true"
+                                />
+                            </div>
+
+                            <span class="font-mono text-xs tracking-[0.3em] text-white/40">
+                                {service.index}
+                            </span>
+                        </div>
+
+                        <!-- Título y descripción -->
+                        <div class="relative">
+                            <h3
+                                data-word-reveal
+                                class="text-2xl font-normal tracking-tight text-white md:text-3xl"
+                            >
+                                {service.title}
+                            </h3>
+                            <p
+                                data-word-reveal
+                                class="mt-4 max-w-sm text-base leading-relaxed text-white/50 transition-colors duration-300 group-hover:text-white/80"
+                            >
+                                {service.description}
+                            </p>
+                        </div>
+                    </article>
+                );
+            })}
+        </div>
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+    import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    let cleanup: (() => void) | null = null;
+
+    /** Divide el texto en palabras dentro de máscaras, igual que el Hero. */
+    const splitWords = (element: HTMLElement): HTMLElement[] => {
+        const text = element.textContent ?? "";
+        element.textContent = "";
+        const words: HTMLElement[] = [];
+
+        text.split(/(\s+)/).forEach((token) => {
+            if (!token) return;
+            if (/^\s+$/.test(token)) {
+                element.appendChild(document.createTextNode(token));
+                return;
+            }
+
+            const mask = document.createElement("span");
+            mask.className = "inline-block overflow-hidden";
+
+            const word = document.createElement("span");
+            word.className = "inline-block will-change-transform";
+            word.textContent = token;
+
+            mask.appendChild(word);
+            element.appendChild(mask);
+            words.push(word);
+        });
+
+        return words;
+    };
+
+    const initServices = (): void => {
+        const section = document.querySelector<HTMLElement>("[data-services]");
+        if (!section) return;
+
+        cleanup?.();
+        cleanup = null;
+
+        const border = section.querySelector<HTMLElement>("[data-border]");
+        const verticals = Array.from(
+            section.querySelectorAll<HTMLElement>('[data-divider="vertical"]'),
+        );
+        const horizontal = section.querySelector<HTMLElement>(
+            '[data-divider="horizontal"]',
+        );
+        const textElements = Array.from(
+            section.querySelectorAll<HTMLElement>("[data-word-reveal]"),
+        );
+        const icons = Array.from(
+            section.querySelectorAll<SVGElement>("[data-icon]"),
+        );
+
+        // Con movimiento reducido todo queda visible, sin animaciones.
+        const mm = gsap.matchMedia();
+
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+            const timeline = gsap.timeline({ paused: true });
+
+            if (border) {
+                timeline.fromTo(
+                    border,
+                    { clipPath: "inset(0 100% 0 0)" },
+                    {
+                        clipPath: "inset(0 0% 0 0)",
+                        duration: 1.2,
+                        ease: "power2.inOut",
+                    },
+                );
+            }
+
+            if (verticals.length > 0) {
+                timeline.from(
+                    verticals,
+                    {
+                        scaleY: 0,
+                        transformOrigin: "top center",
+                        duration: 0.9,
+                        ease: "power2.out",
+                        stagger: 0.15,
+                    },
+                    0.15,
+                );
+            }
+
+            if (horizontal) {
+                timeline.from(
+                    horizontal,
+                    {
+                        scaleX: 0,
+                        transformOrigin: "left center",
+                        duration: 0.9,
+                        ease: "power2.out",
+                    },
+                    0.3,
+                );
+            }
+
+            if (icons.length > 0) {
+                timeline.from(
+                    icons,
+                    {
+                        opacity: 0,
+                        scale: 0.8,
+                        transformOrigin: "center",
+                        duration: 0.6,
+                        ease: "power2.out",
+                        stagger: 0.05,
+                    },
+                    0.4,
+                );
+            }
+
+            // El texto se revela palabra por palabra, igual que el Hero.
+            const originalText = new Map<HTMLElement, string>();
+
+            textElements.forEach((element, index) => {
+                originalText.set(element, element.innerHTML);
+                const words = splitWords(element);
+
+                if (words.length === 0) return;
+
+                timeline.from(
+                    words,
+                    {
+                        yPercent: 100,
+                        duration: 0.8,
+                        ease: "power2.out",
+                        stagger: 0.04,
+                    },
+                    0.35 + index * 0.04,
+                );
+            });
+
+            const trigger = ScrollTrigger.create({
+                trigger: section,
+                start: "top 75%",
+                once: true,
+                onEnter: () => timeline.play(),
+            });
+
+            return () => {
+                trigger.kill();
+                timeline.kill();
+
+                // Restaura el texto original sin las máscaras.
+                originalText.forEach((html, element) => {
+                    element.innerHTML = html;
+                });
+                originalText.clear();
+
+                gsap.killTweensOf([
+                    ...icons,
+                    ...verticals,
+                    ...(horizontal ? [horizontal] : []),
+                    ...(border ? [border] : []),
+                ]);
+                gsap.set(
+                    [
+                        ...icons,
+                        ...verticals,
+                        ...(horizontal ? [horizontal] : []),
+                        ...(border ? [border] : []),
+                    ],
+                    { clearProps: "all" },
+                );
+            };
+        });
+
+        cleanup = () => {
+            mm.revert();
+            cleanup = null;
+        };
+    };
+
+    initServices();
+
+    // Compatibilidad con View Transitions de Astro.
+    document.addEventListener("astro:page-load", initServices);
+    document.addEventListener("astro:before-swap", () => {
+        cleanup?.();
+    });
+    window.addEventListener("pagehide", () => {
+        cleanup?.();
+    });
+</script>

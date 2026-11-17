@@ -1,0 +1,114 @@
+---
+import Dither from "@/components/Dither";
+import { EncryptedText } from "@/components/EncryptedText";
+import FlipButton from "../../components/FlipButton.astro";
+---
+
+<section class="relative min-h-screen w-full overflow-hidden bg-[#0a0a0a] text-white">
+    <!-- Fondo Dither (isla de React, solo en el cliente porque usa WebGL) -->
+    <div class="absolute inset-0 z-0">
+        <Dither
+            client:only="react"
+            waveColor="#bcbcbc"
+            backgroundColor="#0a0a0a"
+            ditherMode="bayer"
+            colorNum={4}
+            pixelSize={2}
+            waveSpeed={0.05}
+            waveFrequency={3}
+            waveAmplitude={0.3}
+            mouseEffect="erase"
+            mouseRadius={0.3}
+            clickRipple={false}
+        />
+    </div>
+
+    <!-- Difuminado inferior para fundir el Hero con la siguiente sección -->
+    <div
+        class="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-40 bg-linear-to-b from-transparent to-[#0a0a0a] sm:h-56"
+        aria-hidden="true"
+    >
+    </div>
+
+    <!-- Texto arriba a la izquierda; seleccionable (el canvas escucha el mouse en window) -->
+    <div class="relative z-10 flex select-text flex-col items-start px-5 pt-20 text-left sm:px-12 sm:pt-28 lg:px-26 lg:pt-36">
+        <h1 class="max-w-[14.5em] text-balance text-[clamp(2.75rem,7.5vw,8rem)] font-normal leading-none tracking-[-0.045em] text-white">
+            <EncryptedText
+                client:only="react"
+                text="Run your business to the next level."
+                revealDelayMs={35}
+                flipDelayMs={40}
+                encryptedClassName="opacity-40"
+            />
+        </h1>
+
+        <p
+            data-hero-subtitle
+            class="mt-6 max-w-[36em] text-base font-light leading-relaxed text-white/85 sm:mt-10 lg:text-xl"
+        >
+            We don't follow trends. We create momentum. Through unconventional
+            ideas, fearless creativity, and data-driven strategies, we build
+            brands that stand out, challenge the ordinary, and make an impact.
+        </p>
+
+        <FlipButton text="Let's Work Together" class="mt-8 sm:mt-10" />
+    </div>
+</section>
+
+<script>
+    import { gsap } from "gsap";
+
+    const subtitle = document.querySelector<HTMLElement>(
+        "[data-hero-subtitle]",
+    );
+
+    if (subtitle) {
+        const originalHTML = subtitle.innerHTML;
+
+        const splitWords = (element: HTMLElement) => {
+            const text = element.textContent ?? "";
+            element.textContent = "";
+            const words: HTMLElement[] = [];
+
+            text.split(/(\s+)/).forEach((token) => {
+                if (!token) return;
+                if (/^\s+$/.test(token)) {
+                    element.appendChild(document.createTextNode(token));
+                    return;
+                }
+
+                const mask = document.createElement("span");
+                mask.className = "inline-block overflow-hidden";
+
+                const word = document.createElement("span");
+                word.className = "inline-block will-change-transform";
+                word.textContent = token;
+
+                mask.appendChild(word);
+                element.appendChild(mask);
+                words.push(word);
+            });
+
+            return words;
+        };
+
+        const mm = gsap.matchMedia();
+
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+            const words = splitWords(subtitle);
+
+            const tween = gsap.from(words, {
+                yPercent: 100,
+                duration: 0.8,
+                ease: "power2.out",
+                stagger: 0.04,
+                delay: 0.2,
+            });
+
+            return () => {
+                tween.kill();
+                subtitle.innerHTML = originalHTML;
+            };
+        });
+    }
+</script>

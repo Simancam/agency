@@ -1,0 +1,174 @@
+---
+import { Smartphone } from "lucide-react";
+---
+
+<header class="fixed inset-x-0 top-0 z-50 font-sans">
+    <nav
+        class="relative grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-6 px-3 py-2 max-[520px]:gap-3.5 max-[520px]:px-5"
+        aria-label="Primary navigation"
+    >
+        <div class="flex items-center justify-start max-[520px]:h-8">
+            <img
+                src="/favicon.svg"
+                alt="Online Store logo"
+                width="40"
+                height="40"
+                class="block h-10 w-10 shrink-0 max-[520px]:h-8 max-[520px]:w-8"
+            />
+        </div>
+
+        <div
+            class="flex items-center justify-center gap-[clamp(12px,2vw,28px)] max-[520px]:hidden"
+            aria-label="Navigation links"
+        >
+            <button
+                type="button"
+                class="nav-link group relative overflow-hidden border-0 bg-transparent p-0 font-inherit text-[0.9rem] leading-none text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                aria-current="page"
+                data-active="true"
+            >
+                <span
+                    aria-hidden="true"
+                    class="absolute inset-0 -translate-x-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:translate-x-0 group-focus-visible:translate-x-0"
+                ></span>
+                <span class="relative z-10 block px-3 py-2 transition-colors duration-300 group-hover:text-[#1e1e1e] group-focus-visible:text-[#1e1e1e]">
+                    Home
+                </span>
+            </button>
+            <button
+                type="button"
+                class="nav-link group relative overflow-hidden border-0 bg-transparent p-0 font-inherit text-[0.9rem] leading-none text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                data-active="false"
+            >
+                <span
+                    aria-hidden="true"
+                    class="absolute inset-0 -translate-x-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:translate-x-0 group-focus-visible:translate-x-0"
+                ></span>
+                <span class="relative z-10 block px-3 py-2 transition-colors duration-300 group-hover:text-[#1e1e1e] group-focus-visible:text-[#1e1e1e]">
+                    Catalog
+                </span>
+            </button>
+            <button
+                type="button"
+                class="nav-link group relative overflow-hidden border-0 bg-transparent p-0 font-inherit text-[0.9rem] leading-none text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                data-active="false"
+            >
+                <span
+                    aria-hidden="true"
+                    class="absolute inset-0 -translate-x-full bg-white transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] group-hover:translate-x-0 group-focus-visible:translate-x-0"
+                ></span>
+                <span class="relative z-10 block px-3 py-2 transition-colors duration-300 group-hover:text-[#1e1e1e] group-focus-visible:text-[#1e1e1e]">
+                    About
+                </span>
+            </button>
+        </div>
+
+        <button
+            type="button"
+            class="contact-button grid w-[clamp(170px,20vw,250px)] justify-self-end border-0 bg-transparent p-0 font-inherit [--d:26px] [perspective:500px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            aria-expanded="false"
+            aria-controls="contact-status"
+        >
+            <span class="contact-box relative grid min-h-[52px] [transform-style:preserve-3d] [transform:translateZ(calc(var(--d)*-1))]">
+                <span class="grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] items-start bg-white px-3 py-2 text-[#1e1e1e] [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:translateZ(var(--d))]">
+                    <span class="col-start-1 row-start-2 self-end text-left text-[0.9rem] leading-none">
+                        Contact Us
+                    </span>
+                    <span class="col-start-2 row-start-1 grid h-5 w-5 place-items-center">
+                        <Smartphone />
+                    </span>
+                </span>
+
+                <span
+                    class="absolute inset-0 grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] items-start bg-black px-3 py-2 text-white [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateX(-90deg)_translateZ(var(--d))]"
+                    aria-hidden="true"
+                >
+                    <span class="col-start-1 row-start-2 self-end text-left text-[0.9rem] leading-none">
+                        Contact Us
+                    </span>
+                    <span class="col-start-2 row-start-1 grid h-5 w-5 place-items-center">
+                        <Smartphone />
+                    </span>
+                </span>
+            </span>
+        </button>
+    </nav>
+
+    <p
+        id="contact-status"
+        class="absolute top-[calc(100%+12px)] right-[clamp(20px,5vw,80px)] m-0 border border-white bg-[#1e1e1e] px-3 py-2.5 text-[0.75rem] text-white"
+        hidden
+    >
+        Contact form coming soon.
+    </p>
+</header>
+
+<script>
+    import { gsap } from "gsap";
+
+    const navLinks = document.querySelectorAll<HTMLButtonElement>(".nav-link");
+    const contactButton =
+        document.querySelector<HTMLButtonElement>(".contact-button");
+    const contactStatus =
+        document.querySelector<HTMLParagraphElement>("#contact-status");
+
+    navLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+            navLinks.forEach((item) => {
+                item.removeAttribute("aria-current");
+                item.dataset.active = "false";
+            });
+            link.setAttribute("aria-current", "page");
+            link.dataset.active = "true";
+        });
+    });
+
+    const contactBox = document.querySelector<HTMLSpanElement>(".contact-box");
+
+    if (contactButton && contactBox) {
+        const mm = gsap.matchMedia();
+
+        mm.add("(prefers-reduced-motion: no-preference)", () => {
+            const setDepth = () => {
+                const d = contactBox.offsetHeight / 2;
+                contactButton.style.setProperty("--d", `${d}px`);
+                gsap.set(contactBox, { z: -d });
+            };
+            setDepth();
+            window.addEventListener("resize", setDepth);
+
+            const tl = gsap.timeline({ paused: true }).to(contactBox, {
+                rotationX: 90,
+                duration: 0.6,
+                ease: "power3.inOut",
+            });
+
+            const enter = () => tl.play();
+            const leave = () => tl.reverse();
+            const focusIn = () => {
+                if (contactButton.matches(":focus-visible")) enter();
+            };
+
+            contactButton.addEventListener("mouseenter", enter);
+            contactButton.addEventListener("mouseleave", leave);
+            contactButton.addEventListener("focus", focusIn);
+            contactButton.addEventListener("blur", leave);
+
+            return () => {
+                window.removeEventListener("resize", setDepth);
+                contactButton.removeEventListener("mouseenter", enter);
+                contactButton.removeEventListener("mouseleave", leave);
+                contactButton.removeEventListener("focus", focusIn);
+                contactButton.removeEventListener("blur", leave);
+                tl.kill();
+                gsap.set(contactBox, { clearProps: "all" });
+            };
+        });
+    }
+
+    contactButton?.addEventListener("click", () => {
+        const isOpen = contactButton.getAttribute("aria-expanded") === "true";
+        contactButton.setAttribute("aria-expanded", String(!isOpen));
+        if (contactStatus) contactStatus.hidden = isOpen;
+    });
+</script>

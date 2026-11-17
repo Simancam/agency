@@ -1,0 +1,171 @@
+---
+import { ArrowUpRight } from "lucide-react";
+
+interface Props {
+    text?: string;
+    icon?: any;
+    variant?: "light" | "dark";
+    class?: string;
+    href?: string;
+    type?: "button" | "submit" | "reset";
+}
+
+const {
+    text = "Let's Work Together",
+    icon: Icon = ArrowUpRight,
+    variant = "light",
+    class: className,
+    href,
+    type = "button",
+} = Astro.props;
+
+const variants = {
+    light: {
+        front: "bg-white text-[#1e1e1e]",
+        back: "bg-black text-white",
+    },
+    dark: {
+        front: "bg-black text-white",
+        back: "bg-white text-[#1e1e1e]",
+    },
+};
+
+const styles = variants[variant] ?? variants.light;
+
+const Tag = href ? "a" : "button";
+---
+
+<span
+    data-flip-mask
+    class:list={["inline-block overflow-hidden align-top", className]}
+>
+    <Tag
+        {...(href ? { href } : { type })}
+        data-flip-button
+        class="grid w-[clamp(170px,20vw,250px)] border-0 bg-transparent p-0 font-inherit [--d:26px] [perspective:500px] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+    >
+        <span
+            data-flip-box
+            class="relative grid min-h-[52px] [transform-style:preserve-3d] [transform:translateZ(calc(var(--d)*-1))]"
+        >
+            <span
+                class:list={[
+                    "flex items-center justify-between gap-3 px-3 py-2 [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:translateZ(var(--d))]",
+                    styles.front,
+                ]}
+            >
+                <span class="text-left text-[0.9rem] leading-none">
+                    {text}
+                </span>
+                <span class="grid h-5 w-5 place-items-center">
+                    <Icon />
+                </span>
+            </span>
+
+            <span
+                class:list={[
+                    "absolute inset-0 flex items-center justify-between gap-3 px-3 py-2 [-webkit-backface-visibility:hidden] [backface-visibility:hidden] [transform:rotateX(-90deg)_translateZ(var(--d))]",
+                    styles.back,
+                ]}
+                aria-hidden="true"
+            >
+                <span class="text-left text-[0.9rem] leading-none">
+                    {text}
+                </span>
+                <span class="grid h-5 w-5 place-items-center">
+                    <Icon />
+                </span>
+            </span>
+        </span>
+    </Tag>
+</span>
+
+<script>
+    import { gsap } from "gsap";
+
+    document
+        .querySelectorAll<HTMLElement>("[data-flip-button]")
+        .forEach((button) => {
+            const mask = button.closest<HTMLElement>("[data-flip-mask]");
+            const box = button.querySelector<HTMLElement>("[data-flip-box]");
+            if (!box) return;
+
+            const mm = gsap.matchMedia();
+
+            mm.add("(prefers-reduced-motion: no-preference)", () => {
+                let revealTween: ReturnType<typeof gsap.to> | null = null;
+                let observer: IntersectionObserver | null = null;
+
+                if (mask) {
+                    gsap.set(button, { yPercent: 100 });
+
+                    observer = new IntersectionObserver(
+                        (entries) => {
+                            if (
+                                !entries.some(
+                                    (entry) => entry.isIntersecting,
+                                )
+                            )
+                                return;
+
+                            revealTween = gsap.to(button, {
+                                yPercent: 0,
+                                duration: 0.8,
+                                ease: "power2.out",
+                                onComplete: () => {
+                                    gsap.set(button, {
+                                        clearProps: "transform",
+                                    });
+                                    mask.style.overflow = "visible";
+                                },
+                            });
+                            observer?.disconnect();
+                        },
+                        { threshold: 0.2 },
+                    );
+                    observer.observe(mask);
+                }
+
+                const setDepth = () => {
+                    const d = box.offsetHeight / 2;
+                    button.style.setProperty("--d", `${d}px`);
+                    gsap.set(box, { z: -d });
+                };
+                setDepth();
+                window.addEventListener("resize", setDepth);
+
+                const tl = gsap.timeline({ paused: true }).to(box, {
+                    rotationX: 90,
+                    duration: 0.6,
+                    ease: "power3.inOut",
+                });
+
+                const enter = () => tl.play();
+                const leave = () => tl.reverse();
+                const focusIn = () => {
+                    if (button.matches(":focus-visible")) enter();
+                };
+
+                button.addEventListener("mouseenter", enter);
+                button.addEventListener("mouseleave", leave);
+                button.addEventListener("focus", focusIn);
+                button.addEventListener("blur", leave);
+
+                return () => {
+                    observer?.disconnect();
+                    revealTween?.kill();
+                    if (mask) {
+                        mask.style.overflow = "";
+                        gsap.set(button, { clearProps: "transform" });
+                    }
+                    window.removeEventListener("resize", setDepth);
+                    button.removeEventListener("mouseenter", enter);
+                    button.removeEventListener("mouseleave", leave);
+                    button.removeEventListener("focus", focusIn);
+                    button.removeEventListener("blur", leave);
+                    tl.kill();
+                    gsap.set(box, { clearProps: "all" });
+                };
+            });
+        });
+</script>

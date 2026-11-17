@@ -1,0 +1,24 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../sections/home/Hero.astro";
+import Marquee from "../sections/home/Marquee.astro";
+import CoreValues from "../sections/home/CoreValues.astro";
+import Services from "../sections/home/Services.astro";
+import ToolsLogos from "../sections/home/ToolsLogos.astro";
+import Testimonials from "../sections/home/Testimonials.astro";
+import Contact from "../sections/Contact.astro";
+---
+
+<Layout>
+    <Navbar />
+    <main class="bg-[#0a0a0a]">
+        <Hero />
+        <Marquee />
+        <CoreValues />
+        <Services />
+        <ToolsLogos />
+        <Testimonials />
+        <Contact />
+    </main>
+</Layout>

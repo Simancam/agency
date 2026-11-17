@@ -1,0 +1,20 @@
+---
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+---
+
+<!doctype html>
+<html lang="en" class="min-h-full bg-[#0a0a0a]">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Online Store</title>
+	</head>
+	<body class="m-0 min-h-screen w-full bg-[#0a0a0a] text-white">
+		<slot />
+		<Footer />
+	</body>
+</html>

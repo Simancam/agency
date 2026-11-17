@@ -1,0 +1,22 @@
+---
+import ScrollVelocity from "@/components/ScrollVelocity";
+---
+
+<section
+    class="relative mt-48 w-full overflow-hidden bg-[#0a0a0a] py-14 text-white sm:mt-64 sm:py-20"
+    aria-label="Scrolling highlights"
+>
+    <ScrollVelocity
+        client:load
+        texts={["Personalized Experiences", "Revolutionize The Market"]}
+        velocity={80}
+        fontSize="clamp(3.25rem, 10vw, 9rem)"
+        fontWeight={800}
+        gap={48}
+        fadeEdges={true}
+        skewWithVelocity={10}
+        scaleWithVelocity={0.05}
+        draggable={true}
+        pauseOnHover={true}
+    />
+</section>
